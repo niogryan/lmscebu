@@ -94,10 +94,7 @@
 										
 										if ($list)
 										{
-											// echo '<pre>';
-											// print_r($list);
-											// die();
-											
+										
 											$ctr=1;
 										
 											foreach($list as $row)

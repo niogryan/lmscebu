@@ -627,7 +627,7 @@ class report_model extends CI_Model
 	function getcollectionlist($brancharea,$status,$sort)
 	{
 
-		$this->db->where('c.branchareaid',$brancharea);
+		$this->db->where('a.branchareaid',$brancharea);
 		
 		if ($status!='Active')
 		{
@@ -640,12 +640,10 @@ class report_model extends CI_Model
 		
 		$this->db->where('a.balance >0');
 		$this->db->distinct();
-		$this->db->select('a.*,firstname,lastname,middlename,suffix,branchname,areaname');
+		$this->db->select('a.loanid,a.totalamountpaid,a.releaseddate,a.dailyduesamount,a.referencenumber,a.balance,a.duedate,
+							a.principalamount,firstname,lastname,middlename,suffix');
 		$this->db->from('tbl_loans a');
 		$this->db->join('tbl_customers b','a.customerid=b.customerid');
-		$this->db->join('tbl_branches_areas c','a.branchareaid=c.branchareaid');
-		$this->db->join('tbl_branches d','c.branchid=d.branchid');
-		$this->db->join('tbl_areas e','c.areaid=e.areaid');
 		if ($sort==2)
 		{
 			$this->db->order_by("duedate,lastname,firstname");
@@ -654,6 +652,7 @@ class report_model extends CI_Model
 		{
 			$this->db->order_by("lastname,firstname");
 		}
+		
 		$result = $this->db->get();
 		return $result->result_array();
 	}
@@ -713,7 +712,5 @@ class report_model extends CI_Model
 		$result = $this->db->get();
 		return $result->result_array()[0]['amount'];
 	}
-	
 
-	
 }

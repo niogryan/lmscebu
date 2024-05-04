@@ -216,6 +216,7 @@
 							if($accessmenu['rptcollectionlist']['isaccess']!='F')
 							{
 								echo anchor('rpt/collectionlist',' <i class="far fa-circle nav-icon"></i> <p>Collection List</p>','class="nav-link '.($submenu=='collectionlist' ? 'active' : null).'"');
+								echo anchor('rpt/collectionlistv2',' <i class="far fa-circle nav-icon"></i> <p>New Collection List <span class="right badge badge-danger">Beta</span></p>','class="nav-link '.($submenu=='collectionlistv2' ? 'active' : null).'"');
 							}
 						?>
 					</li>
@@ -223,8 +224,8 @@
 						<?php
 							if($accessmenu['rptdaily']['isaccess']!='F')
 							{
-								echo anchor('rpt/summary',' <i class="far fa-circle nav-icon"></i> <p>Daily Summary</p>','class="nav-link '.($submenu=='summary' ? 'active' : null).'"');
-								echo anchor('rpt/newsummary',' <i class="far fa-circle nav-icon"></i> <p>New Daily Summary <span class="right badge badge-danger">Beta</span></p>','class="nav-link '.($submenu=='newsummary' ? 'active' : null).'"');
+								//echo anchor('rpt/summary',' <i class="far fa-circle nav-icon"></i> <p>Daily Summary</p>','class="nav-link '.($submenu=='summary' ? 'active' : null).'"');
+								echo anchor('rpt/newsummary',' <i class="far fa-circle nav-icon"></i> <p>Daily Summary </p>','class="nav-link '.($submenu=='newsummary' ? 'active' : null).'"');
 							
 							}
 						?>

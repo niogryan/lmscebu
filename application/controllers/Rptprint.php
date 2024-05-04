@@ -127,6 +127,7 @@ class rptprint extends CI_Controller
 	
 	public function collectionlist()
 	{
+		$this->data['timestart']= date('Y-m-d H:i:s');
 		if($this->uri->segment(3)=='' || $this->uri->segment(4)=='' || $this->uri->segment(5)=='')
 		{
 			$this->session->set_userdata('alertred', $this->mylibraries->show_message('denied'));
@@ -141,6 +142,39 @@ class rptprint extends CI_Controller
 		$this->data['type']=ucfirst($this->uri->segment(5));
 		
 		$output = $this->load->view('report/collectionlist_print',$this->data,TRUE);
+		
+		$dompdf = new Dompdf();
+		
+		$dompdf->loadHtml($output);
+
+		$dompdf->setPaper('legal', 'portrait');
+
+		$dompdf->render();
+		
+		$font = $dompdf->getFontMetrics()->get_font("helvetica", "regular");
+		$dompdf->getCanvas()->page_text(60, 970, "Collection List | Page  {PAGE_NUM} | Collector's Signature:___________________________________ | ".date("F j, Y H:i:s"), $font, 9, array(0,0,0));
+		
+
+		$dompdf->stream('Collection List Report.pdf',array('Attachment'=>0));
+	}
+
+	public function collectionlistv2()
+	{
+		$this->data['timestart']= date('Y-m-d H:i:s');
+		if($this->uri->segment(3)=='' || $this->uri->segment(4)=='' || $this->uri->segment(5)=='')
+		{
+			$this->session->set_userdata('alertred', $this->mylibraries->show_message('denied'));
+			redirect('rpt/collectionlistv2');
+		}
+
+		$this->data['list']=$this->report_model->getcollectionlist($this->uri->segment(4),$this->uri->segment(5),$this->uri->segment(6));
+
+		
+		$this->data['branch']=$this->tools_model->getbranchesdetails($this->uri->segment(3));
+		$this->data['area']=($this->tools_model->branchesareasdetails($this->uri->segment(4))[0]['areaname']);
+		$this->data['type']=ucfirst($this->uri->segment(5));
+		
+		$output = $this->load->view('report/collectionlistv2_print',$this->data,TRUE);
 		
 		$dompdf = new Dompdf();
 		

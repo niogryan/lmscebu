@@ -189,7 +189,7 @@ class rpt extends CI_Controller
 		{
 			$this->data['areas']=$this->data['list']=$this->data['selectedarea']=$this->data['selectedbranch']=$this->data['selectedstatus']=null;
 			$this->data['selectedsort']=1;
-			
+			$this->data['timestart']= date('Y-m-d H:i:s');
 			if ($this->input->post('btnView'))
 			{
 				$this->data['list']=$this->report_model->getcollectionlist($this->input->post('area'),$this->input->post('status'),$this->input->post('sortby'));
@@ -237,6 +237,60 @@ class rpt extends CI_Controller
 		}
 	}
 	
+
+	public function collectionlistv2()
+	{
+		try
+		{
+			$this->data['areas']=$this->data['list']=$this->data['selectedarea']=$this->data['selectedbranch']=$this->data['selectedstatus']=null;
+			$this->data['selectedsort']=1;
+			$this->data['timestart']= date('Y-m-d H:i:s');
+			if ($this->input->post('btnView'))
+			{
+				$this->data['list']=$this->report_model->getcollectionlist($this->input->post('area'),$this->input->post('status'),$this->input->post('sortby'));
+				$this->data['areas']=$this->tools_model->getcollectorsbranchesareasactivebyuser($this->input->post('branch'),$this->session->userdata('lmsmemberid'));
+				
+				$this->data['selectedbranch']=trim($this->input->post('branch'));
+				$this->data['selectedarea']=trim($this->input->post('area'));
+				$this->data['selectedstatus']=trim($this->input->post('status'));
+				$this->data['selectedsort']=trim($this->input->post('sortby'));
+			}
+			else if ($this->input->post('btnPrint'))
+			{
+				$this->form_validation->set_rules('branch', 'Branch', 'trim|required|xss_clean');
+				$this->form_validation->set_rules('area', 'Area', 'trim|required|xss_clean');
+				$this->form_validation->set_rules('status', 'Status', 'trim|required|xss_clean');
+				
+				if ($this->form_validation->run() == FALSE)
+				{
+					$this->session->set_userdata('alertred',  $this->mylibraries->validation_errors_message($this->form_validation->error_array()));
+					redirect('rpt/collectionlistv2/');
+				}
+				
+				redirect('rptprint/collectionlistv2/'.$this->input->post('branch').'/'.$this->input->post('area').'/'.$this->input->post('status').'/'.$this->input->post('sortby'));
+				
+			}
+			else
+			{
+				$this->data['areas']==$this->tools_model->getcollectorsbranchesareasactivebyuser($this->session->userdata('selectedbranch'),$this->session->userdata('lmsmemberid'));
+			}
+			
+			
+			
+			$this->data['branches']=$this->tools_model->getuserbranches($this->session->userdata('lmsmemberid'));
+			
+			$this->data['mainmenu']='report';
+			$this->data['submenu']='collectionlistv2';
+			$this->load->view('templates/header',$this->data);
+			$this->load->view('report/collectionlistv2');
+			$this->load->view('templates/footer');
+		}
+		catch (Exception $e) 
+		{
+			$this->session->set_userdata('alertred', $e->getMessage());
+			redirect('rpt/collectionlist/');
+		}
+	}
 	public function servicecharge()
 	{
 		try

@@ -89,7 +89,7 @@
 											$dailyabsent=$buhobalance=$dailyabsentbalance_asofyesterday=$advancepayment_asofyesterday=$remainingadvancepayment=0;
 											//yesterday
 											$date_yesterday = date("Y-m-d", strtotime($selecteddate . "-1 days")); 
-											$paymentyesterday=$CI->report_model->gettotalpaymentsasbydate($row['loanid'],$date_yesterday);
+											//$paymentyesterday=$CI->report_model->gettotalpaymentsasbydate($row['loanid'],$date_yesterday);
 											$overallpaymentsasofyesterday=$CI->report_model->gettotalpaymentsasbydate($row['loanid'],$date_yesterday);
 	
 											
@@ -112,97 +112,15 @@
 											{
 												$advancepayment_asofyesterday=$overallpaymentsasofyesterday-$total_ideal_payments_asofyesterday;
 											}
-											
-											
-											//today
-											// $no_of_days_to_be_paid=$this->mylibraries->no_of_days_to_be_paid($row['releaseddate'],$selecteddate);
-											// $total_ideal_payments_asoftoday = $no_of_days_to_be_paid * $row['dailyduesamount'];
-
+							
 											$paymenttoday=$newadvancepayment=$balanceadvancededuction=$buho_payments=0;
 											$paymenttoday=$CI->report_model->gettotalamountbydate($row['loanid'],$selecteddate);
-											// $totalpaymentsasoftoday=$CI->report_model->gettotalpaymentsasbydate($row['loanid'],$selecteddate);
-											
-											
-											// $last_payment_date = $CI->report_model->getloanlastpaymentdate($row['loanid']); 
-											// $loan_balance = ($row['principalamount'] + $row['interest']) - $totalpaymentsasoftoday; 
-											
-											// if(strtotime($selecteddate) > strtotime($row['duedate']))
-											// {
-												// continue;
-											// }
-											
-											// $is_advanced_fully_paid = FALSE;
-											// // nag advance fully paid
-											
-											// if($loan_balance <= 0 && strtotime($last_payment_date[0]['paymentdate']) < strtotime($row['duedate'])) 
-											// {
-												// // if ang last payment date + 1 day 
-												// if(strtotime($last_payment_date[0]['paymentdate'] . "+1 days") >= strtotime($selecteddate))
-												// {	
-													// $is_advanced_fully_paid = true;
-												// }
-												// else 
-												// { 
-													// // $recent_customer_loan = get_recent_loan_by_customer_id_and_date($loan->loan_cust_id, $date); 
-													// $recent_customer_loan = $CI->report_model->getrecentloanbycustomeranddate($row['customerid'], $selecteddate); 
-													// if ($recent_customer_loan)
-													// {
-														// if($recent_customer_loan[0]['referencenumber'] == $row['referencenumber']) 
-														// {
-															
-														// } 
-														// else 
-														// {
-															// continue;  
-														// }
-													// }
-													
-												// }
-											// }
-											
-											// $loan_balance_yesterday = ($row['principalamount'] + $row['interest']) - $overallpaymentsasofyesterday; 
-											
-											// if(strtotime($selecteddate) > strtotime($row['duedate']) && $loan_balance_yesterday > 0) 
-											// { 
-												// echo $loan_balance_yesterday;
 												
-												// //$total_bad_accounts_payments += $paymenttoday; 
-											// } 
-														
-										
-											// if ($paymenttoday==0)
-											// {
-												// $dailyabsent=$row['dailyduesamount'];
-											// }
-											// else if ($paymenttoday<$row['dailyduesamount'])
-											// {
-												// $dailyabsent=$row['dailyduesamount']-$paymenttoday;
-											// }
-											
-											
+
 											if ($paymenttoday>$row['dailyduesamount'])
 											{
 												$newadvancepayment=$paymenttoday-$row['dailyduesamount'];
 											}
-		
-											
-											// if ($dailyabsent>0 && $remainingadvancepayment>0)
-											// {
-												// if($dailyabsent >= $remainingadvancepayment) 
-												// { 
-													// $balanceadvancededuction = $remainingadvancepayment; 
-													// $dailyabsent = $dailyabsent - $remainingadvancepayment;
-													// $remainingadvancepayment = 0; 
-												// } 
-												// else 
-												// {
-													// $balanceadvancededuction = $dailyabsent; 
-													// $remainingadvancepayment = $remainingadvancepayment - $dailyabsent; 
-													// $dailyabsent = 0;
-												// }
-											// }
-											
-											
 											
 											if($dailyabsentbalance_asofyesterday > 0 && $newadvancepayment > 0) 
 											{ 
@@ -252,7 +170,7 @@
 										echo '<th style="text-align:right;"></th>';
 										echo '</tr>';
 										
-										
+						
 									}
 								?>
 							</tbody>
@@ -318,7 +236,6 @@
 						</table>
 				<?php
 					}
-
 					$time = new DateTime($timestart);
 					$diff = $time->diff(new DateTime());
 					$elapsed = $diff->format('%i minutes %s seconds');
