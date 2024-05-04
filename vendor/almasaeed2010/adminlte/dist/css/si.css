@@ -1,0 +1,72 @@
+.toplayer {
+	z-index: 999;
+}
+.frost {
+	min-height: 100vh;
+	min-width: 360px !important;
+	padding: 10vh 0 0 0;
+	overflow: hidden;
+	box-shadow: none !important;
+	margin: 0 !important;
+	border-radius: 0 !important;
+	background: rgba(255,255,255,0.2);
+/*start: for Chrome and Edge*/-webkit-backdrop-filter: blur(20px) saturate(168%);
+	backdrop-filter: blur(20px) saturate(168%); /*end*/;
+	right: 0;
+	position: absolute;
+}
+@-moz-document url-prefix() { /*for Firefox*/
+            .frost {
+                min-height: 100vh;
+                padding: 10vh 0 0 0;
+                overflow: hidden;
+                box-shadow: none !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+                right: 0;
+                position: absolute;
+                background: inherit !important;
+            }
+
+                .frost::before {
+                    width: inherit;
+                    min-height: inherit;
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    background: #fff;
+                }
+
+                .frost::after {
+                    width: inherit;
+                    min-height: inherit;
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    background: inherit;
+                    filter: blur(20px) saturate(168%) opacity(30%) brightness(100%);
+                }
+        }
+.bgslider {
+	min-height: 100vh;
+	background: #888 url('//i.imgur.com/6FSp1eg.jpg') center center / cover no-repeat fixed;
+	transition: background 0.3s;
+}
+/***overrides***/
+.login-card-body {
+	background: transparent !important;
+	color: #000 !important;
+	padding:0 !important;
+}
+.input-group-text {
+	background: #fff !important;
+}
+.has-error.input-group .form-control, .has-error.input-group .input-group-text {
+	background: #800 !important;
+	color: #fff !important;
+}
+.wrapper {
+	overflow-y:hidden;
+}
