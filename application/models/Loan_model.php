@@ -322,9 +322,7 @@ class loan_model extends CI_Model
 			{
 				$this->savepayment($returnid,$date,'Special',$special,'New Loan', $userid);
 			}
-			
-			
-			
+
 			$this->inserttracer('Loan',$returnid,$this->db->last_query(),'Add',$userid);
 		}
 		else
@@ -388,10 +386,7 @@ class loan_model extends CI_Model
 			'error_message' => $error['message']
 			);
 		}
-		
-		
-		
-		
+
 		$this->db->trans_complete();
 		return $result;	
 	}
@@ -478,11 +473,6 @@ class loan_model extends CI_Model
 		$this->db->where('loanid',$loanid);
 		$this->db->update('tbl_loans',$data);
 	}
-	
-	
-	
-
-	
 	
 	function updateloanstatus()
 	{
