@@ -327,16 +327,23 @@ class site extends CI_Controller
 		$this->load->view('archive',$data);
 	}
 
-	public function archiveprocess()
+	public function archiveinitiate()
 	{
 		$this->benchmark->mark('code_start');
-		$result['message'] = $this->archiving_model->index();
+		$result = $this->archiving_model->index();
 		$this->benchmark->mark('code_end');
 		//get elapsed time
 		$elapsed_time = $this->benchmark->elapsed_time('code_start', 'code_end');
 		//elapsed time in minutes and seconds
 		$elapsed_time = gmdate("H:i:s", $elapsed_time);
 		$result['elapsed_time'] = $elapsed_time;
+		echo json_encode($result);
+	}
+
+	public function archiveprocess()
+	{
+		$this->benchmark->mark('code_start');
+		$result = $this->archiving_model->process();
 		echo json_encode($result);
 	}
 

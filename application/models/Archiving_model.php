@@ -13,18 +13,17 @@ class archiving_model extends CI_Model
 			$sql = "SELECT COUNT(loanid) as cnt FROM temp_loan";
 			$result = $this->db->query($sql);
 			$row = $result->row_array();
-			if ($row['cnt']>0){
-				$processResult =  $this->process();
+			if ($row['cnt'] > 0) {
+				$processResult = $this->process();
 			}
 			else{
 
 				$sql = "INSERT INTO temp_loan
-				SELECT DISTINCT loanid
+				SELECT DISTINCT loanid,0
 				FROM tbl_loans a
-				WHERE a.balance<=0 AND a.duedate< DATE(NOW()-INTERVAL 1 YEAR)
+				WHERE a.balance<=0 AND a.duedate < DATE(NOW()-INTERVAL 1 YEAR)
 				AND loanid NOT IN (SELECT DISTINCT loanid FROM tbl_loans_archived)
-				AND loanid NOT IN (SELECT DISTINCT loanid FROM tbl_loans_payments WHERE YEAR(paymentdate)>=YEAR(NOW()))
-				LIMIT 100";			
+				AND loanid NOT IN (SELECT DISTINCT loanid FROM tbl_loans_payments WHERE YEAR(paymentdate)>=YEAR(NOW()))";			
 				$this->db->query($sql);	
 
 				$processResult =  $this->process();
@@ -39,10 +38,19 @@ class archiving_model extends CI_Model
 	}
 
 	function process(){
-		try {
 
-			$sql = "SELECT loanid FROM temp_loan";			
+		try {
+			$this->benchmark->mark('code_start');
+			$sql = "SELECT loanid FROM temp_loan where status=0 LIMIT 100";			
 			$result = $this->db->query($sql);	
+			
+			foreach($result->result_array() as $loan){
+				$loanid = $loan['loanid'];
+				$this->db->set('status', 1);
+				$this->db->where('loanid', $loanid);
+				$this->db->update('temp_loan');
+			}
+			
 
 			foreach($result->result_array() as $loan){
 
@@ -51,34 +59,36 @@ class archiving_model extends CI_Model
 				}
 
 				$sql = "INSERT INTO tbl_loans_payments_archived
-							(loanid,ornumber,paymenttype,paymentdate,paymentamount,paymentremarks,entryuserid,entrydate,isfinal)
-							SELECT loanid,ornumber,paymenttype,paymentdate,paymentamount,paymentremarks,entryuserid,entrydate,'F'
-							FROM tbl_loans_payments
-							WHERE  loanid =".$loan['loanid']."
-							";			
+					(loanid,ornumber,paymenttype,paymentdate,paymentamount,paymentremarks,entryuserid,entrydate,isfinal)
+					SELECT loanid,ornumber,paymenttype,paymentdate,paymentamount,paymentremarks,entryuserid,entrydate,'F'
+					FROM tbl_loans_payments
+					WHERE loanid = ".$loan['loanid']."
+					LIMIT 1";			
 				$this->db->query($sql);
 
 				//check if loanid not in tbl_loans_archived
-				$sql = "SELECT loanid FROM tbl_loans_archived WHERE loanid=".$loan['loanid'];
+				$sql = "SELECT loanid FROM tbl_loans_archived WHERE loanid=".$loan['loanid']." LIMIT 1";
 				$result = $this->db->query($sql);
-				$temp = $result->row_array();
-				if (empty($temp)){
-					$sql = "INSERT INTO tbl_loans_archived
-							(loanid)
-							values
-							(".$loan['loanid'].")
-						";			
-					$this->db->query($sql);	
+				if ($result->num_rows() == 0){
+					$this->db->insert('tbl_loans_archived', array('loanid' => $loan['loanid']));
 				}
 
 				$sql = "DELETE FROM tbl_loans_payments WHERE loanid=".$loan['loanid'];
 				$this->db->query($sql);
 
-				$sql = "DELETE FROM temp_loan WHERE loanid=".$loan['loanid'];			
-				$this->db->query($sql);			
+				$sql = "UPDATE temp_loan SET STATUS=2 WHERE loanid=".$loan['loanid'];            
+				$this->db->query($sql);
 			}
-		
-			return "Archiving completed.";
+			
+			$result = $this->status();
+			$this->benchmark->mark('code_end');
+			//get elapsed time
+			$elapsed_time = $this->benchmark->elapsed_time('code_start', 'code_end');
+			//elapsed time in minutes and seconds
+			$elapsed_time = gmdate("H:i:s", $elapsed_time);
+			$result['elapsed_time'] = $elapsed_time;
+			return $result;
+
 		}
 		catch(Exception $e){
 			return $e->getMessage();
@@ -101,21 +111,14 @@ class archiving_model extends CI_Model
 		$result = $this->db->query($sql);
 		$outputdata['paymemntcount']  = $result->row_array()['count'];
 
-		$sql = 'select count(loanid) as count FROM tbl_loans
-			where loanid in (
-				SELECT loanid
-				FROM tbl_loans a
-				WHERE a.balance<=0 AND a.duedate< DATE(NOW()-INTERVAL 1 YEAR)
-				AND loanid NOT IN (SELECT loanid FROM tbl_loans_archived)
-				AND loanid NOT IN (SELECT loanid FROM tbl_loans_payments WHERE YEAR(paymentdate)>=YEAR(NOW()))
-			)
-		';
-
+		$sql = 'select count(loanid) as count FROM temp_loan where status=0';
 		$result = $this->db->query($sql);
 		$outputdata['loancount']  = $result->row_array()['count'];
 
+		$sql = "select count(loanid) as count FROM temp_loan where status=2";
+		$result = $this->db->query($sql);
+		$outputdata['loancountcompleted']  = $result->row_array()['count'];
 		return $outputdata;
-
 	}
 
 	function backup(){
