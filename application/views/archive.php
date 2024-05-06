@@ -58,6 +58,7 @@
                   # Number of CRON Jobs called: <span id="crons">0</span><br>
                   <?php
                        $percentage = $output['loancount'] > 0 ? ($output['loancountcompleted']/$output['loancount'])*100 : 0;
+                        $percentage = number_format($percentage, 2);
                   ?>
                     <div class="progressstatus">
                         Archiving not yet started
