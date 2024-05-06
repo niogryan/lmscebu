@@ -45,6 +45,13 @@ class site extends CI_Controller
 				{
 					if ($result[0]['role']!='Administrator')
 					{
+						$this->load->library('user_agent');
+						if ($this->agent->is_mobile())
+						{
+							echo 'Not allowed in mobile';
+							die();
+						}
+						
 						$check=0;
 						$branch=$this->tools_model->getuserbranches($result[0]['userid']);
 						if (!empty($branch))
@@ -88,13 +95,6 @@ class site extends CI_Controller
 						else
 						{
 							echo '<h1>User no assigned branch</h1>';
-						}
-						
-						$this->load->library('user_agent');
-						if ($this->agent->is_mobile())
-						{
-							echo 'Not allowed in mobile';
-							die();
 						}
 					}
 					

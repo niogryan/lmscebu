@@ -99,7 +99,7 @@
     setTimeout(function() {
         callAjax(); // Call the AJAX function immediately after 5 seconds
         // Then switch to calling the AJAX function every 2 minutes
-        setInterval(callAjax, 120000); // 2 minutes in milliseconds
+        //setInterval(callAjax, 3000000); // 2 minutes in milliseconds
     }, 5000); // 5 seconds in milliseconds
 
     function callAjax() {
@@ -125,6 +125,11 @@
                 $('#paymentcount').text(data['paymentcount']);
                 $('#loancountcompleted').text(data['loancountcompleted']);
                 $('#elapse').text('Last CRON elapse time:' + data['elapsed_time']);
+
+                setTimeout(function() {
+                    location.reload();
+                }, 20000); // 30 seconds in milliseconds
+
             },
             error: function (jqXHR, textStatus, errorThrown){
                 alert('Error archiving!');
@@ -132,7 +137,7 @@
                 //on error refresh the page after 30 seconds
                 setTimeout(function() {
                     location.reload();
-                }, 30000); // 30 seconds in milliseconds
+                }, 20000); // 30 seconds in milliseconds
             }
         });
     }
