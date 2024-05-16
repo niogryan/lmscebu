@@ -57,6 +57,7 @@ class loan_model extends CI_Model
 	{
 
 		$this->db->where('a.branchareaid',$brancharea);
+		$this->db->where('a.status!=','Archived');
 		$this->db->distinct();
 		$this->db->select('loanid,referencenumber,oldreferencenumber,releaseddate,principalamount,interest,balance,status,firstname,lastname,suffix,d.branchname,areacity,areaname');
 		$this->db->from('tbl_loans a');

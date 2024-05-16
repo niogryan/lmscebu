@@ -292,7 +292,9 @@
 												echo '<td style="text-align:right;">Php '.number_format($payments[0]['amount'], 2, '.', ',').'</td>';
 												echo '<td style="text-align:right;">Php '.number_format($row['balance'], 2, '.', ',').'</td>';
 												echo '<td style="text-align:center">';
-												echo anchor('loan/details/'.$row['loanid'].'/'.$this->mylibraries->encrypt('v'.$row['loanid']),'View','class="btn btn-primary btn-sm"');
+												if ($row['status']!='Archived'){
+													echo anchor('loan/details/'.$row['loanid'].'/'.$this->mylibraries->encrypt('v'.$row['loanid']),'View','class="btn btn-primary btn-sm"');
+												}
 												echo '</td>';
 												echo '</tr>';
 											}
