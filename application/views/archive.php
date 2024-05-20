@@ -52,13 +52,14 @@
 						<div class="card">
 							<div class="card-body">
                                 
-                  # Loans to archive: <span id="loancount"><?php echo number_format($output['loancount']); ?></span><br>
+                  # Loans to archive: <span id="loancount"><?php echo number_format($output['count']); ?></span><br>
+                  <!--
                   # Loans archived: <span id="loancountcompleted"><?php echo number_format($output['loancountcompleted']); ?></span><br>
                   # Payments to archive: <span id="paymentcount"><?php echo number_format($output['paymemntcount']); ?></span><br>
                   # Number of CRON Jobs called: <span id="crons">0</span><br>
                   <?php
-                       $percentage = $output['loancount'] > 0 ? ($output['loancountcompleted']/$output['loancount'])*100 : 0;
-                        $percentage = number_format($percentage, 2);
+                      //$percentage = $output['loancountcompleted'] > 0 ? ($output['loancountcompleted']/$output['totalloan'])*100 : 0;
+                      //$percentage = number_format($percentage, 2);
                   ?>
                     <div class="progressstatus">
                         Archiving not yet started
@@ -67,8 +68,9 @@
                     <div class="progress">
                     <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
                     aria-valuenow="<?php echo $percentage; ?>" aria-valuemin="0" aria-valuemax="100" style="width:<?php echo $percentage; ?>%">
-                      <?php echo $percentage; ?>% Completed
+                      <?php //echo $percentage; ?>% Completed
                     </div>
+                    -->
 </div>                          
 							</div>
 						</div>
@@ -118,18 +120,18 @@
                 //if success reload ajax table
 
                 //when success change the value of the progress bar
-                var percentage = data['loancountcompleted'] > 0 ? (data['loancountcompleted']/data['loancount'])*100 : 0;
-                percentage = percentage.toFixed(2);
-                $('.progress-bar').css('width', percentage+'%').attr('aria-valuenow', percentage);
-                $('.progress-bar').text(percentage+'% Completed');
-                $('#loancount').text(data['loancount']);
-                $('#paymentcount').text(data['paymentcount']);
-                $('#loancountcompleted').text(data['loancountcompleted']);
-                $('#elapse').text('Last CRON elapse time:' + data['elapsed_time']);
+                // var percentage = data['loancountcompleted'] > 0 ? (data['loancountcompleted']/data['loancount'])*100 : 0;
+                // percentage = percentage.toFixed(2);
+                // $('.progress-bar').css('width', percentage+'%').attr('aria-valuenow', percentage);
+                // $('.progress-bar').text(percentage+'% Completed');
+                $('#loancount').text(data['count']);
+                // $('#paymentcount').text(data['paymentcount']);
+                // $('#loancountcompleted').text(data['loancountcompleted']);
+                // $('#elapse').text('Last CRON elapse time:' + data['elapsed_time']);
 
                 setTimeout(function() {
                     location.reload();
-                }, 20000); // 30 seconds in milliseconds
+                }, 5000); // 30 seconds in milliseconds
 
             },
             error: function (jqXHR, textStatus, errorThrown){

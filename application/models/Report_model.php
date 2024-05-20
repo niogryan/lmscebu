@@ -628,7 +628,7 @@ class report_model extends CI_Model
 	{
 
 		$this->db->where('a.branchareaid',$brancharea);
-		
+		$this->db->where('a.status !=', 'Archived');
 		if ($status!='Active')
 		{
 			$this->db->where('a.duedate <',date("Y-m-d"));

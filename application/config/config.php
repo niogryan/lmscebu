@@ -23,9 +23,6 @@ date_default_timezone_set('Asia/Manila');
 | a PHP script and you can easily do that on your own.
 |
 */
-//$config['base_url'] = 'http://158.62.76.163/lmscebu/';
-//$config['base_url'] = 'http://222.127.186.77/lmscebu/';
-//$config['base_url'] = 'http://130.105.175.224/lmscebu/';
 $config['base_url'] = 'http://localhost:8080/lmscebu/';
 //$config['base_url'] = 'http://192.168.0.13/lmscebu/';
 /*
