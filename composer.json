@@ -1,0 +1,17 @@
+{
+
+	"config": 
+	{
+		"platform": 
+		{
+			"php": "7.2.32"
+		}
+	},
+	"require":	
+	{
+		"dompdf/dompdf": "0.8.4",
+		"almasaeed2010/adminlte":"3.0"
+	}
+	
+	
+}
