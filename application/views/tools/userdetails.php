@@ -146,6 +146,16 @@
 										</select>
 									</div>
 								</div>
+								<div class="col col-sm-12 col-md-4 col-lg-4">
+									<div class="form-group">
+										<label for="isstrictmachineaccess">Strict User Machine Access</label>
+										<select name="isstrictmachineaccess" class="form-control required">
+											<option value="">Select an Option</option>
+											<option value="1" <?php echo ($details[0]['isstrictmachineaccess']=='1' ? 'selected' : null);?>>Enable</option>
+											<option value="0" <?php echo ($details[0]['isstrictmachineaccess']=='0' ? 'selected' : null);?>>Disable</option>
+										</select>
+									</div>
+								</div>
 								<!--
 								<div class="col col-sm-12 col-md-4 col-lg-4">
 									<div class="form-group">
@@ -224,7 +234,7 @@
 				</div>
 		
 			</div>			
-				<div class="row">	
+			<div class="row">	
 				<div class="col col-sm-12 col-md-12 col-lg-12">	
 					
 					<div class="card card-primary">

@@ -11,7 +11,6 @@
 <meta content="" name="timestamp" />
 <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 <title>LMS</title>
-<link href="https://cdn.pup.edu.ph/img/ico/favicon.ico" rel="icon" type="image/x-icon" />
 <link href="<?php echo $this->config->item('base_url').'vendor/almasaeed2010/adminlte'; ?>/dist/css/adminlte.min.css" rel="stylesheet" />
 <link href="<?php echo $this->config->item('base_url').'vendor/almasaeed2010/adminlte'; ?>/dist/css/si.css" rel="stylesheet" />
 <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" />
@@ -32,10 +31,18 @@
 }
 
 </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LY9MTG0S3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1LY9MTG0S3');
+</script>
 </head>
 
 <body class="sidebar-collapse fixed">
-
 <div class="wrapper">
 
 	<div class="content-wrapper">
@@ -46,18 +53,25 @@
 						<br /><br /><br /><br /><br /><br />
 						<h1 class="box-title text-center "><b>Lending Management System <b></h1>
 						<h2 class="box-title text-center ">Cebu Offices </h2>
-
+						
 					</div>
 					<div class="box-body login-box-msg">
 						<section id="introduction">
 							<p>Sign in to start your session</p>
 							<?php 				
-								if($this->session->userdata('alert'))
+								if($this->session->userdata('alert') == 'Access Denied')
 								{
 							?>
 									<p class="text-danger" style="text-align:center;"><i>Your email address or password is incorrect</i></p>
 							<?php 
 									 $this->session->unset_userdata('alert');
+								}
+								else
+								{
+							?>
+									<p class="text-red" style="text-align:center;"><?php echo $this->session->userdata('alert'); ?></p>
+							<?php
+									$this->session->unset_userdata('alert');
 								}							
 							?>
 						</section>
@@ -75,7 +89,7 @@
 								</div>
 							</div>
 							<div class="input-group mb-3">
-								<input type="password" name="password"  class="form-control" placeholder="password" autocomplete="off">
+								<input  type="password" name="password"  class="form-control" placeholder="password" autocomplete="off">
 								<div class="input-group-append">
 									<div class="input-group-text">
 										<span class="fas fa-lock"></span></div>
@@ -103,7 +117,7 @@
 <script src="<?php echo $this->config->item('base_url').'vendor/almasaeed2010/adminlte'; ?>/plugins/jquery/jquery.min.js"></script>
 <script src="<?php echo $this->config->item('base_url').'vendor/almasaeed2010/adminlte'; ?>/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="<?php echo $this->config->item('base_url').'vendor/almasaeed2010/adminlte'; ?>/dist/js/adminlte.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jqu ery.min.js"></script> -->
 <script>
 	$.getJSON("https://api.ipify.org/?format=json", function(e) 
 	{

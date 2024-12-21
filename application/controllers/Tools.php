@@ -539,25 +539,27 @@ class tools extends CI_Controller
 				redirect('tools/useraccounts/');
 			}
 
+			$parameters = array(
+				'id'				=> 0,
+				'emailaddress' 		=> $this->input->post('emailaddress'),
+				'password' 			=> $this->mylibraries->encrypt($this->input->post('password')),
+				'lastname' 			=> $this->input->post('lastname'),
+				'firstname' 		=> $this->input->post('firstname'),
+				'middleinitial' 	=> $this->input->post('middleinitial'),
+				'mobilenumber' 		=> $this->input->post('mobilenumber'),
+				'address' 			=> $this->input->post('address'),
+				'roleid' 			=> $this->input->post('role'),
+				'isactive' 			=> 'T',
+				'remarks' 			=> $this->input->post('remarks'),
+				'dateaccess'		=> '1',
+				'ipaddress'			=> '::1',
+				'branch'			=> $this->input->post('userbranch'),
+				'entryuserid' 		=>	$this->session->userdata('lmsmemberid'),
+				'entrydate' 		=>  date("Y-m-d H:i:s"),
+				'isstrictmachineaccess' => $this->input->post('isstrictmachineaccess')
+				);
 			
-			$result=$this->tools_model->saveuseraccount
-										(	0
-											,$this->input->post('emailaddress')
-											,$this->input->post('password')
-											,$this->input->post('firstname')
-											,$this->input->post('mi')
-											,$this->input->post('lastname')
-											,$this->input->post('mobilenumber')
-											,$this->input->post('address')
-											,$this->input->post('role')
-											,'T'
-											,$this->input->post('remarks')
-											,'1'
-											,'1'
-											,$this->input->post('userbranch')
-											,$this->session->userdata('lmsmemberid')
-										);	
-
+			$result=$this->tools_model->saveuseraccount($parameters,$this->session->userdata('lmsmemberid'));	
 			if($result['error_number']==0)
 			{
 				$this->session->set_userdata('alertgreen', 'success');
@@ -622,24 +624,31 @@ class tools extends CI_Controller
 				$password = $this->input->post('password');
 			}
 
+			$parameters = array(
+				'id'				=> $this->data['param1'],
+				'emailaddress' 		=> $this->input->post('emailaddress'),
+				'password' 			=> $this->mylibraries->encrypt($password),
+				'lastname' 			=> $this->input->post('lastname'),
+				'firstname' 		=> $this->input->post('firstname'),
+				'middleinitial' 	=> $this->input->post('middleinitial'),
+				'mobilenumber' 		=> $this->input->post('mobilenumber'),
+				'address' 			=> $this->input->post('address'),
+				'roleid' 			=> $this->input->post('role'),
+				'isactive' 			=> $this->input->post('status'),
+				'remarks' 			=> $this->input->post('remarks'),
+				'dateaccess'		=> $this->input->post('collectiondateaccess'),
+				'ipaddress'			=> '::1',
+				'branch'			=> $this->input->post('userbranch'),
+				'entryuserid' 		=>	$this->session->userdata('lmsmemberid'),
+				'entrydate' 		=>  date("Y-m-d H:i:s"),
+				'isstrictmachineaccess' => $this->input->post('isstrictmachineaccess')
+				);
+
+			if (trim($password) == null) {
+				unset($parameters['password']);
+			}
 			
-			$result=$this->tools_model->saveuseraccount
-										(	$this->data['param1']
-											,$this->input->post('emailaddress')
-											,$password 
-											,$this->input->post('firstname')
-											,$this->input->post('middleinitial')
-											,$this->input->post('lastname')
-											,$this->input->post('mobilenumber')
-											,$this->input->post('address')
-											,$this->input->post('role')
-											,$this->input->post('status')
-											,$this->input->post('remarks')
-											,$this->input->post('collectiondateaccess')
-											,'1'
-											,$this->input->post('userbranch')
-											,$this->session->userdata('lmsmemberid')
-										);	
+			$result=$this->tools_model->saveuseraccount($parameters,$this->session->userdata('lmsmemberid'));	
 
 			if($result['error_number']==0)
 			{
@@ -690,8 +699,7 @@ class tools extends CI_Controller
 			$this->session->set_userdata('alertgreen', 'success');
 			redirect('tools/userdetails/'.$this->data['param1'].'/'.$this->data['param2']);	
 		}
-		else
-		{
+		else{
 			if($this->mylibraries->encrypt('vu'.$this->data['param1'])!=$this->data['param2'])
 			{
 				$this->session->set_userdata('alertred', $this->mylibraries->show_message('denied'));
@@ -706,13 +714,38 @@ class tools extends CI_Controller
 		$this->data['branches']=$this->tools_model->getbranches();
 		$this->data['userbranch']=$this->tools_model->getuseraccessbranches($this->data['param1']);
 		$this->data['userareas']=$this->tools_model->getuseraccessareas($this->data['param1']);
-		
-		
-		
+
 		$this->data['mainmenu']='tools';
 		$this->data['submenu']='useraccounts';
 		$this->load->view('templates/header',$this->data);
 		$this->load->view('tools/userdetails');
+		$this->load->view('templates/footer');
+	}
+
+	public function usermachinevalidation(){
+
+		if ($this->uri->segment(3) == 'cookie'){
+			if ($this->uri->segment(4)==1){
+				$this->Usercookies_model->updateCookieStatus($this->uri->segment(5),'Active');
+			}
+			else if ($this->uri->segment(4)==0){
+				$this->Usercookies_model->updateCookieStatus($this->uri->segment(5),'Unathorize');
+			}
+			else if ($this->uri->segment(4)==2){
+				$this->Usercookies_model->updateCookieStatus($this->uri->segment(5),'Expired');
+			}
+			redirect('tools/usermachinevalidation/');
+		}
+
+		$this->data['cookiesPending']=$this->Usercookies_model->getUserCookies(null,null,'Pending');
+		$this->data['cookiesActive']=$this->Usercookies_model->getUserCookies(null,null,'Active');
+		$this->data['cookiesUnathorize']=$this->Usercookies_model->getUserCookies(null,null,'Unathorize');
+		$this->data['cookiesOthers']=$this->Usercookies_model->getUserCookies(null,null,'Expired');
+		
+		$this->data['mainmenu']='tools';
+		$this->data['submenu']='usermachinevalidation';
+		$this->load->view('templates/header',$this->data);
+		$this->load->view('tools/usermachineverification');
 		$this->load->view('templates/footer');
 	}
 	

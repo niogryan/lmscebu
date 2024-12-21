@@ -15,9 +15,9 @@
 	<title>LMS</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="<?php echo $this->config->item('base_url').'vendor/almasaeed2010/adminlte'; ?>/plugins/fontawesome-free/css/all.min.css">
-	<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+	 <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 	<link rel="stylesheet" href="<?php echo $this->config->item('base_url').'vendor/almasaeed2010/adminlte'; ?>/dist/css/adminlte.min.css">
-	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet"> 
 	<link rel="stylesheet" href="<?php echo $this->config->item('base_url').'vendor/almasaeed2010/adminlte'; ?>/plugins/toastr/toastr.min.css">
 	<link rel="stylesheet" href="<?php echo $this->config->item('base_url').'vendor/almasaeed2010/adminlte'; ?>/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 	<link rel="stylesheet" href="<?php echo $this->config->item('base_url').'vendor/almasaeed2010/adminlte'; ?>/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
@@ -30,8 +30,18 @@
 	<?php
 		$this->load->view('templates/style');
 	?>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1LY9MTG0S3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1LY9MTG0S3');
+</script>
 </head>
 <body class="hold-transition sidebar-mini layout-navbar-fixed">
+
 <!-- Site wrapper -->
 <div class="wrapper">
   <!-- Navbar -->
@@ -55,7 +65,7 @@
   <aside class="main-sidebar elevation-4 sidebar-dark-danger">
     <!-- Brand Logo -->
     <a href="#" class="brand-link">
-      <span class="brand-text font-weight-light">Lending Management System</span>
+      <span class="brand-text font-weight-light">Lending MS</span>
     </a>
     <div class="sidebar">
       <!-- Sidebar user (optional) -->
@@ -215,8 +225,6 @@
 						<?php
 							if($accessmenu['rptcollectionlist']['isaccess']!='F')
 							{
-								//echo anchor('rpt/collectionlist',' <i class="far fa-circle nav-icon"></i> <p>Collection List</p>','class="nav-link '.($submenu=='collectionlist' ? 'active' : null).'"');
-								echo anchor('rpt/collectionlistv2',' <i class="far fa-circle nav-icon"></i> <p>New Collection List <span class="right badge badge-danger">Beta</span></p>','class="nav-link '.($submenu=='collectionlistv2' ? 'active' : null).'"');
 							}
 						?>
 					</li>
@@ -224,9 +232,6 @@
 						<?php
 							if($accessmenu['rptdaily']['isaccess']!='F')
 							{
-								//echo anchor('rpt/summary',' <i class="far fa-circle nav-icon"></i> <p>Daily Summary</p>','class="nav-link '.($submenu=='summary' ? 'active' : null).'"');
-								echo anchor('rpt/newsummary',' <i class="far fa-circle nav-icon"></i> <p>Daily Summary </p>','class="nav-link '.($submenu=='newsummary' ? 'active' : null).'"');
-							
 							}
 						?>
 					</li>
@@ -323,6 +328,7 @@
 					|| $accessmenu['toolsholidays']['isaccess']!='F'
 					|| $accessmenu['toolsroles']['isaccess']!='F'
 					|| $accessmenu['toolsuseracounts']['isaccess']!='F'
+					|| $accessmenu['toolsusermachinevalidation']['isaccess']!='F'
 					)
 				{
 			
@@ -387,7 +393,15 @@
 										echo anchor('tools/useraccounts',' <i class="fas fa-users"></i> <p>User Accounts</p>','class="nav-link '.($submenu=='useraccounts' ? 'active' : null).'"');
 									}
 								?>
-							</li>	
+							</li>
+							
+							<li class="nav-item">	
+								<?php
+									if($accessmenu['toolsusermachinevalidation']['isaccess']!='F')
+									{
+										echo anchor('tools/usermachinevalidation',' <i class="fas fa-laptop-code"></i> <p>Users Machine Validation</p>','class="nav-link '.($submenu=='usermachinevalidation' ? 'active' : null).'"');
+									}
+								?>
 							<li class="nav-item">
 								<?php 
 									echo anchor('site/backup',' <i class="fas fa-file-download"></i> <p>Backup</p>','class="nav-link"');
