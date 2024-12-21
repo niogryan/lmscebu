@@ -83,7 +83,7 @@
 	
 	
 	<div class="modal fade" id="AddEdit">
-		<div class="modal-dialog">
+		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title">Add User Acount</h4>
@@ -93,69 +93,109 @@
 				</div>
 				<div class="modal-body">
 					<input type="hidden" name="hid" id="hid"/>
-					<div class="col-12">
-						<div class="form-group">
-							<label>Email Address <code>*</code></label>
-							<input type="email" name="emailaddress" class="form-control required" autocomplete="off"/>
+					<div class="row">
+						<div class="col-4">
+							<div class="form-group">
+								<label>Email Address <code>*</code></label>
+								<input type="email" name="emailaddress" class="form-control required" autocomplete="off"/>
+							</div>
+						</div>				
+						<div class="col-4">
+							<div class="form-group">
+								<label>Password <code>*</code></label>
+								<input type="password" name="password" class="form-control required" autocomplete="off"/>
 						</div>
-						<div class="form-group">
-							<label>Password <code>*</code></label>
-							<input type="password" name="password" class="form-control required" autocomplete="off"/>
+						</div>				
+						<div class="col-4">
+							<div class="form-group">
+								<label>Confirm Password <code>*</code></label>
+								<input type="password" name="confirmpassword" class="form-control required" autocomplete="off"/>
+							</div>
 						</div>
-						<div class="form-group">
-							<label>Confirm Password <code>*</code></label>
-							<input type="password" name="confirmpassword" class="form-control required" autocomplete="off"/>
+					</div>
+					<div class="row">
+						<div class="col-4">
+							<div class="form-group">
+								<label>First Name <code>*</code></label>
+								<input type="text" name="firstname" class="form-control required" autocomplete="off"/>
+							</div>
+						</div>				
+						<div class="col-4">
+							<div class="form-group">
+								<label>Last Name <code>*</code></label>
+								<input type="text" name="lastname" class="form-control required" autocomplete="off"/>
+							</div>
+						</div>				
+						<div class="col-4">
+							<div class="form-group">
+								<label>Middle Initial </label>
+								<input type="text" name="mi" class="form-control required" autocomplete="off"/>
+							</div>
+						</div>				
+					</div>	
+					<div class="row">
+						<div class="col-4">
+							<div class="form-group">
+								<label>Mobile Number</label>
+								<input type="text" name="mobilenumber" class="form-control required" autocomplete="off"/>
+							</div>
+						</div>				
+						<div class="col-8">
+							<div class="form-group">
+								<label>Address</label>
+								<input type="text" name="address" class="form-control required" autocomplete="off"/>
+							</div>
 						</div>
-						<div class="form-group">
-							<label>First Name <code>*</code></label>
-							<input type="text" name="firstname" class="form-control required" autocomplete="off"/>
+					</div>
+					<div class="row">
+						<div class="col-4">
+							<div class="form-group">
+								<label>Role <code>*</code></label>
+								<select name="role" class="form-control">
+									<option value="">Select an Option</option>
+									<?php
+										foreach($roles as $row)
+										{
+											echo '	<option value="'.$row['roleid'].'">'.$row['role'].'</option>';
+										}
+									?>
+								</select>
+							</div>
 						</div>
-						<div class="form-group">
-							<label>Last Name <code>*</code></label>
-							<input type="text" name="lastname" class="form-control required" autocomplete="off"/>
+						<div class="col-4">
+							<div class="form-group">
+								<label for="userbranch">Branch</label>
+								<select name="userbranch" class="form-control required">
+									<option value="">Select an Option</option>
+									<option value="0">None</option>
+									<?php
+										foreach($branches as $row)
+										{
+											
+											echo '<option value="'.$row['branchid'].'" >'.$row['branchname'].'</option>';
+										}
+									?>
+									
+								</select>
+							</div>
 						</div>
-						<div class="form-group">
-							<label>Middle Initial </label>
-							<input type="text" name="mi" class="form-control required" autocomplete="off"/>
+						<div class="col-4">
+							<div class="form-group">
+								<label for="isstrictmachineaccess">Strict User Machine Access</label>
+								<select name="isstrictmachineaccess" class="form-control required">
+									<option value="">Select an Option</option>
+									<option value="1">Enable</option>
+									<option value="0">Disable</option>
+								</select>
+							</div>
 						</div>
-						<div class="form-group">
-							<label>Mobile Number</label>
-							<input type="text" name="mobilenumber" class="form-control required" autocomplete="off"/>
-						</div>
-						<div class="form-group">
-							<label>Address</label>
-							<input type="text" name="address" class="form-control required" autocomplete="off"/>
-						</div>
-						<div class="form-group">
-							<label>Role <code>*</code></label>
-							<select name="role" class="form-control">
-								<option value="">Select an Option</option>
-								<?php
-									foreach($roles as $row)
-									{
-										echo '	<option value="'.$row['roleid'].'">'.$row['role'].'</option>';
-									}
-								?>
-							</select>
-						</div>
-						<div class="form-group">
-							<label for="userbranch">Branch</label>
-							<select name="userbranch" class="form-control required">
-								<option value="">Select an Option</option>
-								<option value="0">None</option>
-								<?php
-									foreach($branches as $row)
-									{
-										
-										echo '<option value="'.$row['branchid'].'" >'.$row['branchname'].'</option>';
-									}
-								?>
-								
-							</select>
-						</div>
-						<div class="form-group">
-							<label>Remarks</label>
-							<textarea name="remarks" id="remarks" class="form-control required" autocomplete="off"></textarea>
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<div class="form-group">
+								<label>Remarks</label>
+								<textarea name="remarks" id="remarks" class="form-control required" autocomplete="off"></textarea>
+							</div>
 						</div>
 					</div>
 				</div>		

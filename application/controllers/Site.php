@@ -13,8 +13,11 @@ class site extends CI_Controller
 			$this->maintenance();
 		}
 		
-		$this->session->set_userdata('Version','2.1.0');
-		$this->loan_model->updateloanstatus();	
+		$this->session->set_userdata('Version','2.0.0');
+		$this->load->helper('cookie');
+		$this->loan_model->updateloanstatus();
+		$this->Usercookies_model->updateExpiredCookies();
+		
 	}
 	
 	public function index()
@@ -27,31 +30,69 @@ class site extends CI_Controller
 	{
 		try
 		{
+
 			$this->form_validation->set_rules('email', 'Email', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean');
 			if ($this->form_validation->run() == FALSE)
 			{
 				throw new Exception('Access Denied');
 			}
-			
-			if ($this->input->post('btnSignIn'))
-			{
-				
-			
-				
-				$result=$this->system_model->validateuseraccount(trim($this->input->post('email')),trim($this->input->post('password')));
 
+			if ($this->input->post('btnSignIn'))
+			{ 
+				$result=$this->system_model->validateuseraccount(trim($this->input->post('email')),trim($this->input->post('password')));
 				if ($result)
 				{
 					if ($result[0]['role']!='Administrator')
 					{
 						$this->load->library('user_agent');
-						if ($this->agent->is_mobile())
-						{
+		
+		  				if ($this->agent->is_mobile())
+		 				{
 							echo 'Not allowed in mobile';
 							die();
+		 				}
+
+						$isCookieFeature = 1;
+						if ($isCookieFeature == 1 && $result[0]['isstrictmachineaccess'] == '1') {
+							$clientsCookie = null;
+							$clientsCookie = $this->input->cookie('lms_user_cebu_cookie', TRUE);
+							if ($clientsCookie == null) {
+								$clientsCookie = $this->doCookiesCreation($result[0]['userid']);
+							}
+
+							$cookie = $this->Usercookies_model->getCookie($clientsCookie);
+							if ($cookie) {
+								//check if the cookie has not expired and authenticated
+								if ($cookie['expires_at'] < date('Y-m-d H:i:s')) {
+									delete_cookie('lms_user_cebu_cookie');
+									$this->session->set_userdata('alert',  $this->mylibraries->show_message('Clientside authentication expired <br /> Please login again'));
+									redirect('/site');
+								}
+
+								if ($cookie['status'] == 'Pending') {
+									$this->session->set_userdata('alert',  $this->mylibraries->show_message('Clientside authentication pending <br />Please contact the administrator'));
+									redirect('/site');
+								}
+
+								if ($cookie['status'] == 'Expired') {
+									delete_cookie('lms_user_cebu_cookie');
+									$this->session->set_userdata('alert',  $this->mylibraries->show_message('Clientside authentication expired <br /> Please login again'));
+									redirect('/site');
+								}
+
+								if ($cookie['status'] != 'Active') {
+									$this->session->set_userdata('alert',  $this->mylibraries->show_message('E01: Clientside authentication failed <br />Please contact the administrator'));
+									redirect('/site');
+								}
+							}
+							else {
+								$this->session->set_userdata('alert',  $this->mylibraries->show_message('E02: Clientside authentication failed<br /> Please contact the administrator'));
+								redirect('/site');
+							}
 						}
-						
+
+
 						$check=0;
 						$branch=$this->tools_model->getuserbranches($result[0]['userid']);
 						if (!empty($branch))
@@ -95,10 +136,9 @@ class site extends CI_Controller
 						else
 						{
 							echo '<h1>User no assigned branch</h1>';
+							die();
 						}
 					}
-					
-					
 					
 					$data = array
 									(
@@ -122,11 +162,11 @@ class site extends CI_Controller
 		}
 		catch (Exception $e) 
 		{
-			$this->session->set_userdata('alert',  $this->mylibraries->show_message($e->getMessage()));
+			$this->session->set_userdata('alert',  $this->mylibraries->show_message('Please contact the administrator.'));
 			redirect('/');
 		}
 	}
-	
+
 	
 	public function accessdenied()
 	{
@@ -152,6 +192,7 @@ class site extends CI_Controller
 	{
 		$this->load->view('unknown');
 	}
+	
 	
 	public function loginas()
 	{
@@ -322,57 +363,10 @@ class site extends CI_Controller
 		die();
 	}
 	
-	public function archive(){
-		$data['output'] = $this->archiving_model->status();
-		$this->load->view('archive',$data);
-	}
-
-	public function archiveinitiate()
+	public function archive()
 	{
-		$this->benchmark->mark('code_start');
-		$result = $this->archiving_model->index();
-		$this->benchmark->mark('code_end');
-		//get elapsed time
-		$elapsed_time = $this->benchmark->elapsed_time('code_start', 'code_end');
-		//elapsed time in minutes and seconds
-		$elapsed_time = gmdate("H:i:s", $elapsed_time);
-		$result['elapsed_time'] = $elapsed_time;
-		echo json_encode($result);
+		$this->archiving_model->index();
 	}
-
-	public function archiveprocess()
-	{
-		$this->benchmark->mark('code_start');
-		$result = $this->archiving_model->process();
-		echo json_encode($result);
-	}
-
-	public function backupPayments()
-	{
-		
-		$this->benchmark->mark('code_start');
-		$this->archiving_model->backup();
-		$this->benchmark->mark('code_end');
-		//get elapsed time
-		$elapsed_time = $this->benchmark->elapsed_time('code_start', 'code_end');
-		//elapsed time in minutes and seconds
-		$elapsed_time = gmdate("H:i:s", $elapsed_time);
-		$result['elapsed_time'] = $elapsed_time;
-		echo json_encode($result);
-	}
-
-	public function c7w2m(){
-		$this->benchmark->mark('code_start');
-		$result['message'] = $this->loan_model->updateTotalPaymentLastPaymentDate();
-		$this->benchmark->mark('code_end');
-		//get elapsed time
-		$elapsed_time = $this->benchmark->elapsed_time('code_start', 'code_end');
-		//elapsed time in minutes and seconds
-		$elapsed_time = gmdate("H:i:s", $elapsed_time);
-		$result['elapsed_time'] = $elapsed_time;
-		echo json_encode($result);
-	}
-
 	
 	public function backup()
 	{
@@ -402,15 +396,6 @@ class site extends CI_Controller
 			die();
 		}
 	}
-
-	public function c7w2mview(){
-		
-		$this->load->view('updating');
-	}
-
-
-	
-	
 	
 	public function updatebalance()
 	{
@@ -421,6 +406,56 @@ class site extends CI_Controller
 		}
 		
 	}
+
+	private function doCookiesCreation($userid){
+		try{
+			$pendingCookies = $this->Usercookies_model->getPendingCookies( $userid);
+			if (!$pendingCookies){
+				$cookieValue = bin2hex(random_bytes(16)); // Unique cookie value
+				$userAgent = $_SERVER['HTTP_USER_AGENT'];
+				$remoteAddress = $_SERVER['REMOTE_ADDR'];
+				$clientSignature = sha1($userAgent . $remoteAddress); // User-Agent + IP
+				$cookieValue = $cookieValue. $clientSignature;
+
+				$cookie = array(
+					'name'   => 'lms_user_cebu_cookie',
+					'value'  => $cookieValue,
+					'expire' => 31536000, // 1 year
+					'secure' => FALSE,
+					'httponly' => TRUE,
+				);
+				$this->input->set_cookie($cookie);
+				// Save cookie details in the database
+				$parameter = [
+					'user_id' 		=> $userid,
+					'cookie_value' 	=> $cookieValue,
+					'created_at' 	=> date('Y-m-d H:i:s'),
+					'status' 		=> 'Pending',
+					'expires_at' 	=> date('Y-m-d H:i:s', strtotime('+1 year')),
+					'user_agent'	=> $userAgent,
+					'ip_address'	=> $remoteAddress
+					];
+				$this->Usercookies_model->saveCookie($parameter);
+				return $cookieValue;
+			}
+			else{
+				echo 'Clientside authentication pending. Please contact the administrator.';
+				die();
+			}
+		}
+		catch (Exception $e){
+			echo $e->getMessage();
+			die();
+		}
+	}
 	
-	
+	public function clean(){
+		delete_cookie('lms_user_cebu_cookie');
+		if (isset($_COOKIE['lms_user_cebu_cookie'])) {
+			echo 'Unable to delete. Please contact the administrator';
+		}
+		else{
+			echo 'Machine authentication cleaned';
+		}
+	}
 }

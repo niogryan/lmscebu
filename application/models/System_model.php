@@ -12,11 +12,21 @@ class system_model extends CI_Model
 		$DB->where('emailaddress', $emailaddress);
 		$DB->where('password', $this->mylibraries->encrypt($password));
 		$DB->where('a.isactive', 'T');
-		$DB->select('userid,emailaddress,lastname,firstname,middleinitial,b.role,a.roleid,ipaddress');
+		$DB->select('userid,emailaddress,lastname,firstname,middleinitial,b.role,a.roleid,ipaddress,isstrictmachineaccess');
 		$DB->from('tbl_user_accounts a');
 		$DB->join('tbl_roles b','a.roleid=b.roleid');
 		$result = $DB->get();
 		return $result->result_array();
+	}
+
+	function getUserDetails($id){	
+		$DB = $this->load->database('dbconn', TRUE);	
+		$DB->where('userid', $id);
+		$DB->select('userid,emailaddress,lastname,firstname,middleinitial,b.role,a.roleid,ipaddress,isstrictmachineaccess');
+		$DB->from('tbl_user_accounts a');
+		$DB->join('tbl_roles b','a.roleid=b.roleid');
+		$result = $DB->get();
+		return ($result->num_rows() > 0) ? $result->row_array() : null;
 	}
 	
 	function loginas()
